@@ -1,6 +1,6 @@
 {
   "name": "hengzhang",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "衡账 — 金蝶云·星空独立对账桌面工具",
   "main": "./out/main/index.js",
   "author": "一恒科",
@@ -12,6 +12,7 @@
     "preview": "electron-vite preview",
     "pack": "npm run build && electron-builder --dir",
     "dist": "npm run build && electron-builder --win nsis",
+    "dist:cn": "npm run build && node scripts/dist-cn.mjs",
     "rebuild": "electron-rebuild -f -w better-sqlite3",
     "m0": "node scripts/m0-probe.mjs"
   },
@@ -40,14 +41,15 @@
       "output": "release"
     },
     "files": [
-      "out/**/*",
-      "resources/**/*"
+      "out/**/*"
     ],
     "extraResources": [
       {
         "from": "resources",
         "to": "resources",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       }
     ],
     "asarUnpack": [
@@ -56,13 +58,16 @@
     "publish": [
       {
         "provider": "github",
-        "owner": "REPLACE_OWNER",
+        "owner": "qqww45",
         "repo": "hengzhang",
         "releaseType": "release"
       }
     ],
     "win": {
-      "target": ["nsis"]
+      "target": [
+        "nsis"
+      ],
+      "signAndEditExecutable": false
     },
     "nsis": {
       "oneClick": false,
