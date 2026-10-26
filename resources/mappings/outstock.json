@@ -1,0 +1,6 @@
+{
+  "formId": "SAL_OUTSTOCK",
+  "fieldKeys": "FID,FBillNo,FDate,FCustomerID,FCustomerID.FName,FDocumentStatus,FCancelStatus",
+  "note": "M0 锁定后补齐分录：物料、数量、单价、金额、源单号、客户PO",
+  "lineFieldKeysDraft": "FEntity_FENTRYID,FMaterialId.FNumber,FMaterialId.FName,FUnitID.FName,FRealQty,FTaxPrice,FAllAmount,FSrcBillNo"
+}
