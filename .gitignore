@@ -11,3 +11,4 @@ release
 *.sqlite-journal
 .local
 Thumbs.db
+*.tsbuildinfo

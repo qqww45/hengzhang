@@ -4,10 +4,13 @@ import { useRouter } from 'vue-router'
 import PageHeader from '../components/ui/PageHeader.vue'
 import HzField from '../components/ui/HzField.vue'
 import HzButton from '../components/ui/HzButton.vue'
+import type { DataCenterOption } from '../../../shared/types'
 
 const router = useRouter()
 const saving = ref(false)
 const testing = ref(false)
+const detecting = ref(false)
+const centers = ref<DataCenterOption[]>([])
 const toast = ref<{ type: 'ok' | 'err'; text: string } | null>(null)
 const hasPassword = ref(false)
 
@@ -35,6 +38,23 @@ onMounted(async () => {
   form.preparerName = cfg.preparerName
   hasPassword.value = cfg.hasPassword
 })
+
+async function detect() {
+  detecting.value = true
+  toast.value = null
+  try {
+    const found = await window.hengzhang.detectEnv()
+    if (found.serverUrl) form.serverUrl = found.serverUrl
+    if (found.username) form.username = found.username
+    if (found.acctId) form.acctId = found.acctId
+    centers.value = found.dataCenters
+    toast.value = { type: found.serverUrl ? 'ok' : 'err', text: found.message }
+  } catch (e) {
+    toast.value = { type: 'err', text: e instanceof Error ? e.message : String(e) }
+  } finally {
+    detecting.value = false
+  }
+}
 
 async function save() {
   saving.value = true
@@ -82,8 +102,9 @@ async function test() {
     <PageHeader
       eyebrow="Step 01 · Connect"
       title="连接金蝶云"
-      subtitle="填写公有云 WebAPI 基址与数据中心内码。首次可由实施协助填写；测通后进入同步。"
+      subtitle="可先检测本机金蝶客户端里保存过的地址。密码仍需手填，测通后进入同步。"
     >
+      <HzButton variant="ghost" :loading="detecting" @click="detect">检测环境</HzButton>
       <HzButton variant="ghost" :loading="saving" @click="save">保存</HzButton>
       <HzButton :loading="testing" @click="test">测试连接</HzButton>
     </PageHeader>
@@ -97,7 +118,13 @@ async function test() {
           </HzField>
           <div class="two">
             <HzField label="acctID / 数据中心内码">
-              <input v-model="form.acctId" placeholder="数据中心内码" spellcheck="false" />
+              <select v-if="centers.length > 1" v-model="form.acctId">
+                <option value="">请选择数据中心</option>
+                <option v-for="center in centers" :key="center.id" :value="center.id">
+                  {{ center.name }} · {{ center.id }}
+                </option>
+              </select>
+              <input v-else v-model="form.acctId" placeholder="数据中心内码" spellcheck="false" />
             </HzField>
             <HzField label="账号">
               <input v-model="form.username" autocomplete="username" />
@@ -146,6 +173,7 @@ async function test() {
     <aside class="tips rise" style="animation-delay: 0.18s">
       <div class="tips-title">连接说明</div>
       <ol>
+        <li>点「检测环境」会读取本机金蝶客户端曾经保存的服务器地址、数据中心和账号。读不到的项保持手填。</li>
         <li>登录界面第一项「数据中心」对应本页的 acctID（内码，不是公司中文名）。</li>
         <li>测连前建议先退出金蝶客户端，避免同账号会话互踢。</li>
         <li>本工具只读查询，不会改写金蝶单据。</li>

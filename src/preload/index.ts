@@ -3,6 +3,7 @@ import type {
   AppConfigPublic,
   AppConfigSaveInput,
   AppInfo,
+  EnvDetectResult,
   ConnectionTestResult,
   CustomerOption,
   StatementDTO,
@@ -17,6 +18,7 @@ const api = {
   getConfig: (): Promise<AppConfigPublic> => ipcRenderer.invoke('config:get'),
   saveConfig: (input: AppConfigSaveInput): Promise<AppConfigPublic> =>
     ipcRenderer.invoke('config:save', input),
+  detectEnv: (): Promise<EnvDetectResult> => ipcRenderer.invoke('config:detectEnv'),
   testConnection: (): Promise<ConnectionTestResult> => ipcRenderer.invoke('config:test'),
   runSync: (input: SyncStartInput): Promise<SyncProgress[]> => ipcRenderer.invoke('sync:run', input),
   onSyncProgress: (cb: (p: SyncProgress) => void) => {

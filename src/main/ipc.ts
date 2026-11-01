@@ -1,6 +1,7 @@
 import { ipcMain, shell } from 'electron'
 import { getPublicConfig, saveConfig } from './configStore'
 import { getKingdee } from './kingdee/client'
+import { detectKingdeeEnv } from './kingdee/envDetect'
 import { getDb } from './db'
 import { runSync, listCustomers } from './sync/runner'
 import { buildStatement } from './domain/statement'
@@ -26,6 +27,7 @@ export function registerIpc() {
 
   ipcMain.handle('config:get', () => getPublicConfig())
   ipcMain.handle('config:save', (_e, input: AppConfigSaveInput) => saveConfig(input))
+  ipcMain.handle('config:detectEnv', () => detectKingdeeEnv())
   ipcMain.handle('config:test', async () => {
     const client = getKingdee()
     const login = await client.login()

@@ -40,6 +40,20 @@ export interface ConnectionTestResult {
   kickedHint?: boolean
 }
 
+export interface DataCenterOption {
+  id: string
+  name: string
+  number?: string
+}
+
+export interface EnvDetectResult {
+  serverUrl: string
+  acctId: string
+  username: string
+  dataCenters: DataCenterOption[]
+  message: string
+}
+
 export interface SyncProgress {
   entity: SyncEntity
   status: SyncRunStatus
